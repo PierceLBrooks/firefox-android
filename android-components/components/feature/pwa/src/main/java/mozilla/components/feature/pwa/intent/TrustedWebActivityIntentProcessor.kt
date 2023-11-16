@@ -39,7 +39,7 @@ class TrustedWebActivityIntentProcessor(
     packageManager: PackageManager,
     relationChecker: RelationChecker,
     private val store: CustomTabsServiceStore,
-) : IntentProcessor {
+) : IntentProcessor() {
 
     private val verifier = OriginVerifierFeature(packageManager, relationChecker) { store.dispatch(it) }
     private val scope = MainScope()

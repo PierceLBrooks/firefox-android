@@ -20,7 +20,7 @@ import mozilla.components.support.utils.toSafeIntent
  */
 class FennecBookmarkShortcutsIntentProcessor(
     private val addNewTabUseCase: TabsUseCases.AddNewTabUseCase,
-) : IntentProcessor {
+) : IntentProcessor() {
 
     /**
      * Returns true if this Intent is of a Fennec pinned shortcut.

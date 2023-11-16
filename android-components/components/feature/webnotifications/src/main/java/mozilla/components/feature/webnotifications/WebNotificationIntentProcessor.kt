@@ -15,7 +15,7 @@ import mozilla.components.support.utils.ext.getParcelableCompat
  */
 class WebNotificationIntentProcessor(
     private val engine: Engine,
-) : IntentProcessor {
+) : IntentProcessor() {
     /**
      * Processes an incoming intent expected to contain information about a web notification.
      * If such information is available this will inform the web notification about it being clicked.

@@ -35,7 +35,7 @@ class TabIntentProcessor(
     private val tabsUseCases: TabsUseCases,
     private val newTabSearchUseCase: SearchUseCases.NewTabSearchUseCase,
     private val isPrivate: Boolean = false,
-) : IntentProcessor {
+) : IntentProcessor() {
 
     /**
      * Loads a URL from a view intent in a new session.

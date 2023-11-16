@@ -4,17 +4,31 @@
 
 package mozilla.components.feature.intent.processing
 
+import android.content.Context
 import android.content.Intent
 
 /**
  * Processor for Android intents which should trigger session-related actions.
  */
-interface IntentProcessor {
+open class IntentProcessor() {
     /**
      * Processes the given [Intent].
      *
      * @param intent The intent to process.
      * @return True if the intent was processed, otherwise false.
      */
-    fun process(intent: Intent): Boolean
+    open fun process(intent: Intent): Boolean {
+        return false
+    }
+
+    /**
+     * Processes the given [Intent] with a [Context].
+     *
+     * @param intent The intent to process.
+     * @param context The context in which to process the intent.
+     * @return True if the intent was processed in the given context, otherwise false.
+     */
+    open fun process(intent: Intent, context: Context?): Boolean {
+        return process(intent)
+    }
 }

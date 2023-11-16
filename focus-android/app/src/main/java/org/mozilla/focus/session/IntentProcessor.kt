@@ -7,6 +7,7 @@ package org.mozilla.focus.session
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Browser
 import android.text.TextUtils
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.feature.customtabs.createCustomTabConfigFromIntent
@@ -39,7 +40,7 @@ class IntentProcessor(
     /**
      * Handle this incoming intent (via onCreate()) and create a new session if required.
      */
-    fun handleIntent(context: Context, intent: SafeIntent, savedInstanceState: Bundle?): Result {
+    fun handleIntent(context: Context, intent: SafeIntent, savedInstanceState: Bundle?): Result? {
         if ((intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
             // This Intent was launched from history (recent apps). Android will redeliver the
             // original Intent (which might be a VIEW intent). However if there's no active browsing
@@ -149,6 +150,24 @@ class IntentProcessor(
         )
     }
 
+    private fun getAdditionalHeaders(intent: SafeIntent): Map<String, String>? {
+        val pairs = intent.getBundleExtra(Browser.EXTRA_HEADERS)
+        val headers = mutableMapOf<String, String>()
+        pairs?.keySet()?.forEach { key ->
+            val header = pairs.getString(key)
+            if (header != null) {
+                headers[key] = header
+            } else {
+                throw IllegalArgumentException("getAdditionalHeaders() intent bundle contains wrong key value pair")
+            }
+        }
+        return if (headers.isEmpty()) {
+            null
+        } else {
+            headers
+        }
+    }
+
     private fun createSession(source: SessionState.Source, intent: SafeIntent, url: String): Result {
         return if (isCustomTabIntent(intent.unsafe)) {
             Result.CustomTab(
@@ -157,6 +176,7 @@ class IntentProcessor(
                     createCustomTabConfigFromIntent(intent.unsafe, context.resources),
                     private = true,
                     source = source,
+                    additionalHeaders = getAdditionalHeaders(intent)
                 ),
             )
         } else {
@@ -166,6 +186,7 @@ class IntentProcessor(
                     source = source,
                     selectTab = true,
                     private = true,
+                    additionalHeaders = getAdditionalHeaders(intent)
                 ),
             )
         }
@@ -183,6 +204,7 @@ class IntentProcessor(
                 createCustomTabConfigFromIntent(intent.unsafe, context.resources),
                 private = true,
                 source = source,
+                additionalHeaders = getAdditionalHeaders(intent)
             )
             Pair(Result.CustomTab(tabId), tabId)
         } else {
@@ -190,6 +212,7 @@ class IntentProcessor(
                 url,
                 source = source,
                 private = true,
+                additionalHeaders = getAdditionalHeaders(intent)
             )
             Pair(Result.Tab(tabId), tabId)
         }

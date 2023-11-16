@@ -12,7 +12,7 @@ import mozilla.components.support.utils.SafeIntent
 import org.mozilla.fenix.HomeActivity
 import org.mozilla.fenix.home.intent.StartSearchIntentProcessor
 
-class NewTabShortcutIntentProcessor : IntentProcessor {
+class NewTabShortcutIntentProcessor : IntentProcessor() {
 
     /**
      * Processes the given [Intent].

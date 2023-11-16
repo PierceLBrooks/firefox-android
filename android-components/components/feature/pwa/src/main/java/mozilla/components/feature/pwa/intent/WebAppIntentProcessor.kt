@@ -30,7 +30,7 @@ class WebAppIntentProcessor(
     private val addTabUseCase: CustomTabsUseCases.AddWebAppTabUseCase,
     private val loadUrlUseCase: SessionUseCases.DefaultLoadUrlUseCase,
     private val storage: ManifestStorage,
-) : IntentProcessor {
+) : IntentProcessor() {
 
     /**
      * Returns true if this intent should launch a progressive web app.

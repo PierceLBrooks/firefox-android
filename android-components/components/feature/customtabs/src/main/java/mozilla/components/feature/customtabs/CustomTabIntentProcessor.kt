@@ -4,6 +4,7 @@
 
 package mozilla.components.feature.customtabs
 
+import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.res.Resources
@@ -24,7 +25,9 @@ class CustomTabIntentProcessor(
     private val addCustomTabUseCase: CustomTabsUseCases.AddCustomTabUseCase,
     private val resources: Resources,
     private val isPrivate: Boolean = false,
-) : IntentProcessor {
+) : IntentProcessor() {
+
+    private var safeIntent: SafeIntent? = null
 
     private fun matches(intent: Intent): Boolean {
         val safeIntent = intent.toSafeIntent()
@@ -51,20 +54,32 @@ class CustomTabIntentProcessor(
     }
 
     override fun process(intent: Intent): Boolean {
+        return process(intent, null)
+    }
+
+    override fun process(intent: Intent, context: Context?): Boolean {
         val safeIntent = SafeIntent(intent)
         val url = safeIntent.dataString
+        this.safeIntent = safeIntent
 
         return if (!url.isNullOrEmpty() && matches(intent)) {
-            val config = createCustomTabConfigFromIntent(intent, resources)
-            val caller = safeIntent.externalPackage()
-            val customTabId = addCustomTabUseCase(
-                url,
-                config,
-                isPrivate,
-                getAdditionalHeaders(safeIntent),
-                source = SessionState.Source.External.CustomTab(caller),
-            )
-            intent.putSessionId(customTabId)
+            val headersAction = safeIntent.getStringExtra(Browser.EXTRA_HEADERS + ".action")
+            val headersPermission = safeIntent.getStringExtra(Browser.EXTRA_HEADERS + ".permission")
+            if (headersAction.isNullOrEmpty() || headersPermission.isNullOrEmpty() || context == null) {
+                val config = createCustomTabConfigFromIntent(intent, resources)
+                val caller = safeIntent.externalPackage()
+                val customTabId = addCustomTabUseCase(
+                    url,
+                    config,
+                    isPrivate,
+                    getAdditionalHeaders(safeIntent),
+                    source = SessionState.Source.External.CustomTab(caller),
+                )
+                intent.putSessionId(customTabId)
+            } else {
+                val broadcastIntent = Intent(headersAction)
+                context.sendBroadcast(broadcastIntent, headersPermission)
+            }
 
             true
         } else {

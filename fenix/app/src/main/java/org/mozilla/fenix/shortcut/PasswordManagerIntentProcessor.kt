@@ -14,7 +14,7 @@ import org.mozilla.fenix.HomeActivity
 /**
  * Intent processor that will handle intents for the password manager shortcut
  */
-class PasswordManagerIntentProcessor : IntentProcessor {
+class PasswordManagerIntentProcessor : IntentProcessor() {
 
     /**
      * Processes the given [Intent].

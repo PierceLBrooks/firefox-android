@@ -11,7 +11,7 @@ import org.mozilla.fenix.BuildConfig
 /**
  * Process public deep links that are coming from external apps.
  */
-class ExternalDeepLinkIntentProcessor : IntentProcessor {
+class ExternalDeepLinkIntentProcessor : IntentProcessor() {
     /**
      * Processes the given [Intent] verifying if it is an external deeplink.
      *

@@ -37,7 +37,7 @@ class FennecWebAppIntentProcessor(
     private val context: Context,
     private val useCases: CustomTabsUseCases,
     private val storage: ManifestStorage,
-) : IntentProcessor {
+) : IntentProcessor() {
     val logger = Logger("FennecWebAppIntentProcessor")
 
     /**
